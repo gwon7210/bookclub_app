@@ -26,11 +26,44 @@ class _MyMeetingsScreenState extends State<MyMeetingsScreen>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('내 모임'),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          '내 모임',
+          style: TextStyle(
+            color: Colors.black87,
+            fontSize: 24,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
         bottom: TabBar(
           controller: _tabController,
-          tabs: const [Tab(text: '참여한 모임'), Tab(text: '만든 모임')],
+          labelColor: Colors.black87,
+          unselectedLabelColor: Colors.black38,
+          indicatorColor: const Color(0xFF4CD7D0),
+          indicatorWeight: 3,
+          tabs: const [
+            Tab(
+              child: Text(
+                '참여한 모임',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+            Tab(
+              child: Text(
+                '만든 모임',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ],
         ),
       ),
       body: TabBarView(
@@ -61,8 +94,20 @@ class _MyMeetingsScreenState extends State<MyMeetingsScreen>
       itemCount: meetings.length,
       itemBuilder: (context, index) {
         final meeting = meetings[index];
-        return Card(
+        return Container(
           margin: const EdgeInsets.only(bottom: 16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.1),
+                spreadRadius: 1,
+                blurRadius: 4,
+                offset: const Offset(0, 2),
+              ),
+            ],
+          ),
           child: Padding(
             padding: const EdgeInsets.all(16),
             child: Column(
@@ -72,34 +117,113 @@ class _MyMeetingsScreenState extends State<MyMeetingsScreen>
                   meeting['title'] as String,
                   style: const TextStyle(
                     fontSize: 18,
-                    fontWeight: FontWeight.bold,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
                   ),
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 Row(
                   children: [
-                    const Icon(Icons.calendar_today, size: 16),
-                    const SizedBox(width: 4),
-                    Text(meeting['date'] as String),
-                    const SizedBox(width: 16),
-                    const Icon(Icons.location_on, size: 16),
-                    const SizedBox(width: 4),
-                    Text(meeting['location'] as String),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF5F5F5),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.calendar_today,
+                            size: 16,
+                            color: Colors.black54,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            meeting['date'] as String,
+                            style: const TextStyle(
+                              color: Colors.black54,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF5F5F5),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.location_on,
+                            size: 16,
+                            color: Colors.black54,
+                          ),
+                          const SizedBox(width: 4),
+                          Text(
+                            meeting['location'] as String,
+                            style: const TextStyle(
+                              color: Colors.black54,
+                              fontSize: 14,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
                   ],
                 ),
-                const SizedBox(height: 8),
+                const SizedBox(height: 12),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Text(
-                      '참여자 ${meeting['currentMembers']}/${meeting['maxMembers']}',
-                      style: const TextStyle(color: Colors.grey),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF5F5F5),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        '참여자 ${meeting['currentMembers']}/${meeting['maxMembers']}',
+                        style: const TextStyle(
+                          color: Colors.black54,
+                          fontSize: 14,
+                        ),
+                      ),
                     ),
                     ElevatedButton(
                       onPressed: () {
                         // TODO: 채팅방 입장
                       },
-                      child: const Text('채팅방 입장'),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF4CD7D0),
+                        foregroundColor: Colors.white,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 16,
+                          vertical: 8,
+                        ),
+                      ),
+                      child: const Text(
+                        '채팅방 입장',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ),
                   ],
                 ),

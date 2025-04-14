@@ -3,6 +3,7 @@ import '../meeting/meeting_detail_screen.dart';
 import '../meeting/meeting_create_screen.dart';
 import '../mypage/mypage_screen.dart';
 import '../chat/chat_list_screen.dart';
+import '../location/location_setting_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -17,12 +18,12 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFFFFFFF), // 밝은 배경
       body: SafeArea(
         child: _selectedIndex == 0
             ? Column(
                 children: [
                   _buildHeader(),
-                  _buildFilterTabs(),
                   Expanded(child: _buildMeetingList()),
                 ],
               )
@@ -32,6 +33,10 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       floatingActionButton: _selectedIndex == 0
           ? FloatingActionButton(
+              backgroundColor: const Color(0xFF4CD7D0), // 산뜻한 민트
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(16),
+              ),
               onPressed: () {
                 Navigator.push(
                   context,
@@ -40,11 +45,15 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 );
               },
-              child: const Icon(Icons.add),
+              child: const Icon(Icons.add, color: Colors.white),
             )
           : null,
       bottomNavigationBar: BottomNavigationBar(
         currentIndex: _selectedIndex,
+        selectedItemColor: const Color(0xFF1E88E5), // 파란 포인트
+        unselectedItemColor: Colors.grey,
+        backgroundColor: Colors.white,
+        type: BottomNavigationBarType.fixed,
         onTap: (index) {
           setState(() {
             _selectedIndex = index;
@@ -61,17 +70,35 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildHeader() {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
       child: Row(
         children: [
-          const Text(
-            '서울 강남',
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+          GestureDetector(
+            onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const LocationSettingScreen(),
+                ),
+              );
+            },
+            child: Row(
+              children: [
+                const Text(
+                  '서울 강남',
+                  style: TextStyle(
+                    fontSize: 22,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.black87,
+                  ),
+                ),
+                const Icon(Icons.keyboard_arrow_down, color: Colors.black54),
+              ],
+            ),
           ),
-          const Icon(Icons.keyboard_arrow_down),
           const Spacer(),
           IconButton(
-            icon: const Icon(Icons.filter_list),
+            icon: const Icon(Icons.tune, size: 24, color: Colors.black54),
             onPressed: () {
               // TODO: 필터 화면 표시
             },
@@ -81,37 +108,10 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget _buildFilterTabs() {
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: [
-          _buildFilterChip('날짜'),
-          _buildFilterChip('태그'),
-          _buildFilterChip('참여 방식'),
-          _buildFilterChip('나이'),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildFilterChip(String label) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8),
-      child: FilterChip(
-        label: Text(label),
-        onSelected: (bool selected) {
-          // TODO: 필터 적용
-        },
-      ),
-    );
-  }
-
   Widget _buildMeetingList() {
     return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: 10, // 임시 데이터
+      padding: const EdgeInsets.all(20),
+      itemCount: 10,
       itemBuilder: (context, index) {
         return _buildMeetingCard(context);
       },
@@ -120,8 +120,12 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildMeetingCard(BuildContext context) {
     return Card(
+      color: const Color(0xFFFDFDFD),
+      elevation: 1,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       margin: const EdgeInsets.only(bottom: 16),
       child: InkWell(
+        borderRadius: BorderRadius.circular(16),
         onTap: () {
           Navigator.push(
             context,
@@ -131,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
         child: Padding(
-          padding: const EdgeInsets.all(16),
+          padding: const EdgeInsets.all(20),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -141,47 +145,51 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Text(
                       '책 제목이 들어갈 자리입니다',
                       style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
+                        fontSize: 17,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.black87,
                       ),
                     ),
                   ),
                   Container(
-                    padding: const EdgeInsets.symmetric(
-                      horizontal: 8,
-                      vertical: 4,
-                    ),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
-                      color: Colors.blue.shade100,
-                      borderRadius: BorderRadius.circular(12),
+                      color: const Color(0xFFE1F5FE),
+                      borderRadius: BorderRadius.circular(8),
                     ),
                     child: const Text(
                       '즉시',
-                      style: TextStyle(color: Colors.blue, fontSize: 12),
+                      style: TextStyle(color: Color(0xFF0288D1), fontSize: 12),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               Row(
-                children: [
-                  const Icon(Icons.calendar_today, size: 16),
-                  const SizedBox(width: 4),
-                  const Text('2024.04.20 19:00'),
-                  const SizedBox(width: 16),
-                  const Icon(Icons.location_on, size: 16),
-                  const SizedBox(width: 4),
-                  const Text('강남역 스타벅스'),
+                children: const [
+                  Icon(Icons.calendar_today, size: 16, color: Colors.grey),
+                  SizedBox(width: 4),
+                  Text('2024.04.20 19:00',
+                      style: TextStyle(color: Colors.black54)),
+                  SizedBox(width: 16),
+                  Icon(Icons.location_on, size: 16, color: Colors.grey),
+                  SizedBox(width: 4),
+                  Text('강남역 스타벅스', style: TextStyle(color: Colors.black54)),
                 ],
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               Row(
                 children: [
-                  const Icon(Icons.people, size: 16),
+                  const Icon(Icons.people, size: 16, color: Colors.grey),
                   const SizedBox(width: 4),
-                  const Text('3/5명'),
+                  const Text('3/5명', style: TextStyle(color: Colors.black54)),
                   const Spacer(),
                   TextButton(
+                    style: TextButton.styleFrom(
+                      foregroundColor: const Color(0xFF0288D1),
+                      textStyle: const TextStyle(fontWeight: FontWeight.w500),
+                    ),
                     onPressed: () {
                       Navigator.push(
                         context,

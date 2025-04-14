@@ -31,8 +31,22 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('북클럽 모임 1'),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          '북클럽 모임 1',
+          style: TextStyle(
+            color: Colors.black87,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black87),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: Column(
         children: [
@@ -48,10 +62,15 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                       : Alignment.centerLeft,
                   child: Container(
                     margin: const EdgeInsets.only(bottom: 8),
-                    padding: const EdgeInsets.all(12),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 12,
+                    ),
                     decoration: BoxDecoration(
-                      color: message.isMe ? Colors.blue : Colors.grey[200],
-                      borderRadius: BorderRadius.circular(12),
+                      color: message.isMe
+                          ? const Color(0xFF4CD7D0)
+                          : const Color(0xFFF5F5F5),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
@@ -59,7 +78,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                         Text(
                           message.text,
                           style: TextStyle(
-                            color: message.isMe ? Colors.white : Colors.black,
+                            color: message.isMe ? Colors.white : Colors.black87,
+                            fontSize: 15,
                           ),
                         ),
                         const SizedBox(height: 4),
@@ -67,9 +87,8 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                           message.time,
                           style: TextStyle(
                             fontSize: 12,
-                            color: message.isMe
-                                ? Colors.white70
-                                : Colors.grey[600],
+                            color:
+                                message.isMe ? Colors.white70 : Colors.black38,
                           ),
                         ),
                       ],
@@ -80,15 +99,15 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
             ),
           ),
           Container(
-            padding: const EdgeInsets.all(8),
+            padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
               color: Colors.white,
               boxShadow: [
                 BoxShadow(
-                  color: Colors.grey.withOpacity(0.2),
+                  color: Colors.grey.withOpacity(0.1),
                   spreadRadius: 1,
-                  blurRadius: 3,
-                  offset: const Offset(0, -1),
+                  blurRadius: 4,
+                  offset: const Offset(0, -2),
                 ),
               ],
             ),
@@ -97,28 +116,37 @@ class _ChatRoomScreenState extends State<ChatRoomScreen> {
                 Expanded(
                   child: TextField(
                     controller: _messageController,
+                    style: const TextStyle(color: Colors.black87),
                     decoration: const InputDecoration(
                       hintText: '메시지를 입력하세요',
+                      hintStyle: TextStyle(color: Colors.black38),
                       border: InputBorder.none,
                     ),
                   ),
                 ),
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: () {
-                    if (_messageController.text.isNotEmpty) {
-                      setState(() {
-                        _messages.add(
-                          ChatMessage(
-                            text: _messageController.text,
-                            isMe: true,
-                            time: '오후 2:30',
-                          ),
-                        );
-                        _messageController.clear();
-                      });
-                    }
-                  },
+                const SizedBox(width: 8),
+                Container(
+                  decoration: BoxDecoration(
+                    color: const Color(0xFF4CD7D0),
+                    borderRadius: BorderRadius.circular(20),
+                  ),
+                  child: IconButton(
+                    icon: const Icon(Icons.send, color: Colors.white),
+                    onPressed: () {
+                      if (_messageController.text.isNotEmpty) {
+                        setState(() {
+                          _messages.add(
+                            ChatMessage(
+                              text: _messageController.text,
+                              isMe: true,
+                              time: '오후 2:30',
+                            ),
+                          );
+                          _messageController.clear();
+                        });
+                      }
+                    },
+                  ),
                 ),
               ],
             ),
