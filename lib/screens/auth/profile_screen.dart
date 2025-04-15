@@ -1,25 +1,24 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 
-class PhoneScreen extends StatefulWidget {
-  const PhoneScreen({super.key});
+class ProfileScreen extends StatefulWidget {
+  const ProfileScreen({super.key});
 
   @override
-  State<PhoneScreen> createState() => _PhoneScreenState();
+  State<ProfileScreen> createState() => _ProfileScreenState();
 }
 
-class _PhoneScreenState extends State<PhoneScreen> {
-  final _phoneController = TextEditingController();
+class _ProfileScreenState extends State<ProfileScreen> {
+  final _nameController = TextEditingController();
   String? _errorMessage;
 
   @override
   void dispose() {
-    _phoneController.dispose();
+    _nameController.dispose();
     super.dispose();
   }
 
-  bool _isValidPhoneNumber(String phone) {
-    return RegExp(r'^010-\d{4}-\d{4}$').hasMatch(phone);
+  bool _isValidName(String name) {
+    return name.length >= 2 && name.length <= 10;
   }
 
   @override
@@ -30,7 +29,7 @@ class _PhoneScreenState extends State<PhoneScreen> {
         backgroundColor: Colors.white,
         elevation: 0,
         title: const Text(
-          '전화번호 입력',
+          '프로필 등록',
           style: TextStyle(
             color: Colors.black87,
             fontSize: 18,
@@ -56,7 +55,7 @@ class _PhoneScreenState extends State<PhoneScreen> {
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: const Text(
-                  '전화번호를 입력해주세요',
+                  '프로필을 등록해주세요!',
                   style: TextStyle(
                     fontSize: 20,
                     fontWeight: FontWeight.w600,
@@ -66,7 +65,7 @@ class _PhoneScreenState extends State<PhoneScreen> {
               ),
               const SizedBox(height: 12),
               const Text(
-                '인증번호를 받을 전화번호를 입력해주세요',
+                '북클럽에서 사용할 닉네임을 입력해주세요\n(2-10자)',
                 style: TextStyle(
                   fontSize: 14,
                   color: Colors.black54,
@@ -85,18 +84,13 @@ class _PhoneScreenState extends State<PhoneScreen> {
                   ),
                 ),
                 child: TextField(
-                  controller: _phoneController,
-                  keyboardType: TextInputType.phone,
-                  inputFormatters: [
-                    FilteringTextInputFormatter.digitsOnly,
-                    LengthLimitingTextInputFormatter(11),
-                  ],
+                  controller: _nameController,
                   style: const TextStyle(
                     fontSize: 16,
                     color: Colors.black87,
                   ),
                   decoration: InputDecoration(
-                    hintText: '010-1234-5678',
+                    hintText: '닉네임을 입력해주세요',
                     hintStyle: TextStyle(
                       color: Colors.grey[400],
                       fontSize: 16,
@@ -108,20 +102,10 @@ class _PhoneScreenState extends State<PhoneScreen> {
                       vertical: 16,
                     ),
                     prefixIcon: const Icon(
-                      Icons.phone_outlined,
+                      Icons.person_outline,
                       color: Color(0xFF4CD7D0),
                     ),
                   ),
-                  onChanged: (value) {
-                    if (value.length == 11) {
-                      final formatted =
-                          '${value.substring(0, 3)}-${value.substring(3, 7)}-${value.substring(7)}';
-                      _phoneController.text = formatted;
-                      _phoneController.selection = TextSelection.fromPosition(
-                        TextPosition(offset: formatted.length),
-                      );
-                    }
-                  },
                 ),
               ),
               if (_errorMessage != null) ...[
@@ -139,11 +123,11 @@ class _PhoneScreenState extends State<PhoneScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
-                    if (_isValidPhoneNumber(_phoneController.text)) {
+                    if (_isValidName(_nameController.text)) {
                       setState(() => _errorMessage = null);
-                      Navigator.pushNamed(context, '/verify');
+                      Navigator.pushNamed(context, '/home');
                     } else {
-                      setState(() => _errorMessage = '올바른 전화번호를 입력해주세요');
+                      setState(() => _errorMessage = '2-10자 사이의 닉네임을 입력해주세요');
                     }
                   },
                   style: ElevatedButton.styleFrom(
@@ -156,7 +140,7 @@ class _PhoneScreenState extends State<PhoneScreen> {
                     elevation: 0,
                   ),
                   child: const Text(
-                    '인증번호 받기',
+                    '완료',
                     style: TextStyle(
                       fontSize: 16,
                       fontWeight: FontWeight.w600,

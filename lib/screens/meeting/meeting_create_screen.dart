@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'meeting_create_complete_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 
@@ -34,11 +35,12 @@ class _MeetingCreateScreenState extends State<MeetingCreateScreen> {
   }
 
   Future<void> _selectDate(BuildContext context) async {
+    final DateTime now = DateTime.now();
     final DateTime? picked = await showDatePicker(
       context: context,
-      initialDate: DateTime.now(),
-      firstDate: DateTime.now(),
-      lastDate: DateTime(2025),
+      initialDate: now,
+      firstDate: now,
+      lastDate: DateTime(now.year + 1, 12, 31),
     );
     if (picked != null && picked != _selectedDate) {
       setState(() {
@@ -48,18 +50,132 @@ class _MeetingCreateScreenState extends State<MeetingCreateScreen> {
   }
 
   Future<void> _selectTime(BuildContext context) async {
-    final TimeOfDay? picked = await showTimePicker(
+    await showModalBottomSheet(
       context: context,
-      initialTime: TimeOfDay.now(),
+      backgroundColor: Colors.transparent,
+      builder: (BuildContext context) {
+        return Container(
+          decoration: const BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+          ),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(
+                padding: const EdgeInsets.symmetric(vertical: 12),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(
+                      color: Colors.grey.withOpacity(0.2),
+                    ),
+                  ),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    TextButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: const Text(
+                        '취소',
+                        style: TextStyle(
+                          color: Colors.black54,
+                          fontSize: 16,
+                        ),
+                      ),
+                    ),
+                    const Text(
+                      '시간 선택',
+                      style: TextStyle(
+                        fontSize: 18,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        setState(() {
+                          _selectedTime = TimeOfDay(
+                              hour: _selectedHour, minute: _selectedMinute);
+                          _isAM = _selectedHour < 12;
+                        });
+                        Navigator.pop(context);
+                      },
+                      child: const Text(
+                        '확인',
+                        style: TextStyle(
+                          color: Color(0xFF4CD7D0),
+                          fontSize: 16,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              SizedBox(
+                height: 200,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Expanded(
+                      child: CupertinoPicker(
+                        itemExtent: 40,
+                        onSelectedItemChanged: (index) {
+                          setState(() {
+                            _isAM = index == 0;
+                          });
+                        },
+                        children: const [
+                          Text('오전', style: TextStyle(fontSize: 20)),
+                          Text('오후', style: TextStyle(fontSize: 20)),
+                        ],
+                      ),
+                    ),
+                    Expanded(
+                      child: CupertinoPicker(
+                        itemExtent: 40,
+                        onSelectedItemChanged: (index) {
+                          setState(() {
+                            _selectedHour = _isAM ? index + 1 : index + 13;
+                            if (_selectedHour > 12) _selectedHour -= 12;
+                          });
+                        },
+                        children: List.generate(12, (index) {
+                          return Text(
+                            '${index + 1}',
+                            style: const TextStyle(fontSize: 20),
+                          );
+                        }),
+                      ),
+                    ),
+                    const Text(
+                      ':',
+                      style: TextStyle(fontSize: 20),
+                    ),
+                    Expanded(
+                      child: CupertinoPicker(
+                        itemExtent: 40,
+                        onSelectedItemChanged: (index) {
+                          setState(() {
+                            _selectedMinute = index * 5;
+                          });
+                        },
+                        children: List.generate(12, (index) {
+                          return Text(
+                            '${(index * 5).toString().padLeft(2, '0')}',
+                            style: const TextStyle(fontSize: 20),
+                          );
+                        }),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
+      },
     );
-    if (picked != null) {
-      setState(() {
-        _selectedTime = picked;
-        _selectedHour = picked.hour;
-        _selectedMinute = picked.minute;
-        _isAM = picked.hour < 12;
-      });
-    }
   }
 
   @override
@@ -198,91 +314,69 @@ class _MeetingCreateScreenState extends State<MeetingCreateScreen> {
             Row(
               children: [
                 Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
-                          spreadRadius: 1,
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
+                  child: TextButton(
+                    onPressed: () => _selectDate(context),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.all(16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      backgroundColor: Colors.white,
+                      elevation: 2,
+                      shadowColor: Colors.grey.withOpacity(0.1),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.calendar_today,
+                          color: Colors.black54,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          _selectedDate == null
+                              ? '날짜 선택'
+                              : '${_selectedDate!.year}.${_selectedDate!.month.toString().padLeft(2, '0')}.${_selectedDate!.day.toString().padLeft(2, '0')}',
+                          style: const TextStyle(
+                            color: Colors.black87,
+                            fontSize: 16,
+                          ),
                         ),
                       ],
-                    ),
-                    child: TextButton(
-                      onPressed: () => _selectDate(context),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.all(16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.calendar_today,
-                            color: Colors.black54,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            _selectedDate == null
-                                ? '날짜 선택'
-                                : '${_selectedDate!.year}.${_selectedDate!.month.toString().padLeft(2, '0')}.${_selectedDate!.day.toString().padLeft(2, '0')}',
-                            style: const TextStyle(
-                              color: Colors.black87,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                   ),
                 ),
                 const SizedBox(width: 16),
                 Expanded(
-                  child: Container(
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.grey.withOpacity(0.1),
-                          spreadRadius: 1,
-                          blurRadius: 4,
-                          offset: const Offset(0, 2),
+                  child: TextButton(
+                    onPressed: () => _selectTime(context),
+                    style: TextButton.styleFrom(
+                      padding: const EdgeInsets.all(16),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      backgroundColor: Colors.white,
+                      elevation: 2,
+                      shadowColor: Colors.grey.withOpacity(0.1),
+                    ),
+                    child: Row(
+                      children: [
+                        const Icon(
+                          Icons.access_time,
+                          color: Colors.black54,
+                          size: 20,
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          _selectedTime == null
+                              ? '시간 선택'
+                              : '${_isAM ? '오전' : '오후'} ${_selectedHour.toString().padLeft(2, '0')}:${_selectedMinute.toString().padLeft(2, '0')}',
+                          style: const TextStyle(
+                            color: Colors.black87,
+                            fontSize: 16,
+                          ),
                         ),
                       ],
-                    ),
-                    child: TextButton(
-                      onPressed: () => _selectTime(context),
-                      style: TextButton.styleFrom(
-                        padding: const EdgeInsets.all(16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      child: Row(
-                        children: [
-                          const Icon(
-                            Icons.access_time,
-                            color: Colors.black54,
-                            size: 20,
-                          ),
-                          const SizedBox(width: 8),
-                          Text(
-                            _selectedTime == null
-                                ? '시간 선택'
-                                : '${_isAM ? '오전' : '오후'} ${_selectedHour.toString().padLeft(2, '0')}:${_selectedMinute.toString().padLeft(2, '0')}',
-                            style: const TextStyle(
-                              color: Colors.black87,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ],
-                      ),
                     ),
                   ),
                 ),

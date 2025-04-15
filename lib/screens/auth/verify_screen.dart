@@ -9,121 +9,147 @@ class VerifyScreen extends StatefulWidget {
 }
 
 class _VerifyScreenState extends State<VerifyScreen> {
-  final List<TextEditingController> _controllers = List.generate(
-    6,
-    (_) => TextEditingController(),
-  );
-  final List<FocusNode> _focusNodes = List.generate(6, (_) => FocusNode());
-  int _remainingTime = 180; // 3분
-
-  @override
-  void initState() {
-    super.initState();
-    _startTimer();
-  }
+  final _codeController = TextEditingController();
+  String? _errorMessage;
 
   @override
   void dispose() {
-    for (var controller in _controllers) {
-      controller.dispose();
-    }
-    for (var node in _focusNodes) {
-      node.dispose();
-    }
+    _codeController.dispose();
     super.dispose();
   }
 
-  void _startTimer() {
-    Future.delayed(const Duration(seconds: 1), () {
-      if (mounted && _remainingTime > 0) {
-        setState(() => _remainingTime--);
-        _startTimer();
-      }
-    });
-  }
-
-  String _formatTime(int seconds) {
-    final minutes = seconds ~/ 60;
-    final remainingSeconds = seconds % 60;
-    return '${minutes.toString().padLeft(2, '0')}:${remainingSeconds.toString().padLeft(2, '0')}';
+  bool _isValidCode(String code) {
+    return code.length == 6;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('인증번호 입력')),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          '인증번호 입력',
+          style: TextStyle(
+            color: Colors.black87,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black54),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                '인증번호를 입력해주세요',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                '문자로 받은 6자리 인증번호를 입력해주세요',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
-              ),
-              const SizedBox(height: 32),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: List.generate(6, (index) {
-                  return SizedBox(
-                    width: 45,
-                    child: TextField(
-                      controller: _controllers[index],
-                      focusNode: _focusNodes[index],
-                      textAlign: TextAlign.center,
-                      keyboardType: TextInputType.number,
-                      inputFormatters: [
-                        FilteringTextInputFormatter.digitsOnly,
-                        LengthLimitingTextInputFormatter(1),
-                      ],
-                      decoration: InputDecoration(
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      onChanged: (value) {
-                        if (value.isNotEmpty && index < 5) {
-                          _focusNodes[index + 1].requestFocus();
-                        } else if (value.isNotEmpty && index == 5) {
-                          // 모든 숫자가 입력되었을 때 자동으로 인증 처리
-                          final code = _controllers.map((c) => c.text).join();
-                          if (code.length == 6) {
-                            // 임시로 모든 인증번호를 통과시키기
-                            Navigator.pushNamed(context, '/profile');
-                          }
-                        }
-                      },
-                    ),
-                  );
-                }),
-              ),
-              const SizedBox(height: 24),
-              Center(
-                child: Text(
-                  _formatTime(_remainingTime),
-                  style: const TextStyle(fontSize: 16, color: Colors.grey),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF4CD7D0).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Text(
+                  '인증번호를 입력해주세요',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF4CD7D0),
+                  ),
                 ),
               ),
-              const SizedBox(height: 8),
-              Center(
-                child: TextButton(
-                  onPressed:
-                      _remainingTime == 0
-                          ? () {
-                            setState(() => _remainingTime = 180);
-                            _startTimer();
-                          }
-                          : null,
-                  child: Text(
-                    '인증번호 재전송',
+              const SizedBox(height: 12),
+              const Text(
+                'SMS로 전송된 6자리 인증번호를 입력해주세요',
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black54,
+                  height: 1.5,
+                ),
+              ),
+              const SizedBox(height: 32),
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8F9FA),
+                  borderRadius: BorderRadius.circular(16),
+                  border: Border.all(
+                    color: _errorMessage != null
+                        ? Colors.red.withOpacity(0.3)
+                        : Colors.transparent,
+                  ),
+                ),
+                child: TextField(
+                  controller: _codeController,
+                  keyboardType: TextInputType.number,
+                  inputFormatters: [
+                    FilteringTextInputFormatter.digitsOnly,
+                    LengthLimitingTextInputFormatter(6),
+                  ],
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black87,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: '123456',
+                    hintStyle: TextStyle(
+                      color: Colors.grey[400],
+                      fontSize: 16,
+                    ),
+                    errorText: _errorMessage,
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
+                    prefixIcon: const Icon(
+                      Icons.lock_outline,
+                      color: Color(0xFF4CD7D0),
+                    ),
+                  ),
+                ),
+              ),
+              if (_errorMessage != null) ...[
+                const SizedBox(height: 8),
+                Text(
+                  _errorMessage!,
+                  style: TextStyle(
+                    color: Colors.red[400],
+                    fontSize: 12,
+                  ),
+                ),
+              ],
+              const Spacer(),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    if (_isValidCode(_codeController.text)) {
+                      setState(() => _errorMessage = null);
+                      Navigator.pushNamed(context, '/profile');
+                    } else {
+                      setState(() => _errorMessage = '올바른 인증번호를 입력해주세요');
+                    }
+                  },
+                  style: ElevatedButton.styleFrom(
+                    padding: const EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: const Color(0xFF4CD7D0),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    elevation: 0,
+                  ),
+                  child: const Text(
+                    '인증하기',
                     style: TextStyle(
-                      color: _remainingTime == 0 ? Colors.blue : Colors.grey,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
                 ),

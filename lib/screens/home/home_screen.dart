@@ -143,8 +143,19 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildHeader() {
-    return Padding(
+    return Container(
       padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.05),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: Row(
         children: [
           GestureDetector(
@@ -156,26 +167,44 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
               );
             },
-            child: Row(
-              children: [
-                const Text(
-                  '서울 강남',
-                  style: TextStyle(
-                    fontSize: 22,
-                    fontWeight: FontWeight.w600,
-                    color: Colors.black87,
+            child: Container(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              decoration: BoxDecoration(
+                color: const Color(0xFFF8F9FA),
+                borderRadius: BorderRadius.circular(12),
+              ),
+              child: Row(
+                children: [
+                  const Text(
+                    '서울 강남',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                      color: Color(0xFF4CD7D0),
+                    ),
                   ),
-                ),
-                const Icon(Icons.keyboard_arrow_down, color: Colors.black54),
-              ],
+                  const SizedBox(width: 4),
+                  const Icon(
+                    Icons.keyboard_arrow_down,
+                    color: Color(0xFF4CD7D0),
+                    size: 20,
+                  ),
+                ],
+              ),
             ),
           ),
           const Spacer(),
-          IconButton(
-            icon: const Icon(Icons.tune, size: 24, color: Colors.black54),
-            onPressed: () {
-              // TODO: 필터 화면 표시
-            },
+          Container(
+            padding: const EdgeInsets.all(8),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8F9FA),
+              borderRadius: BorderRadius.circular(12),
+            ),
+            child: const Icon(
+              Icons.tune,
+              size: 20,
+              color: Color(0xFF4CD7D0),
+            ),
           ),
         ],
       ),
@@ -193,11 +222,20 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildMeetingCard(BuildContext context) {
-    return Card(
-      color: const Color(0xFFFDFDFD),
-      elevation: 1,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+    return Container(
       margin: const EdgeInsets.only(bottom: 16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.05),
+            spreadRadius: 1,
+            blurRadius: 4,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
       child: InkWell(
         borderRadius: BorderRadius.circular(16),
         onTap: () {
@@ -219,50 +257,114 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Text(
                       '책 제목이 들어갈 자리입니다',
                       style: TextStyle(
-                        fontSize: 17,
+                        fontSize: 18,
                         fontWeight: FontWeight.w600,
                         color: Colors.black87,
+                        height: 1.3,
                       ),
                     ),
                   ),
                   Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                     decoration: BoxDecoration(
                       color: const Color(0xFFE1F5FE),
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(20),
                     ),
                     child: const Text(
-                      '즉시',
-                      style: TextStyle(color: Color(0xFF0288D1), fontSize: 12),
+                      '즉시 참여',
+                      style: TextStyle(
+                        color: Color(0xFF0288D1),
+                        fontSize: 13,
+                        fontWeight: FontWeight.w600,
+                      ),
                     ),
                   ),
                 ],
               ),
-              const SizedBox(height: 12),
-              Row(
-                children: const [
-                  Icon(Icons.calendar_today, size: 16, color: Colors.grey),
-                  SizedBox(width: 4),
-                  Text('2024.04.20 19:00',
-                      style: TextStyle(color: Colors.black54)),
-                  SizedBox(width: 16),
-                  Icon(Icons.location_on, size: 16, color: Colors.grey),
-                  SizedBox(width: 4),
-                  Text('강남역 스타벅스', style: TextStyle(color: Colors.black54)),
-                ],
-              ),
-              const SizedBox(height: 12),
+              const SizedBox(height: 16),
               Row(
                 children: [
-                  const Icon(Icons.people, size: 16, color: Colors.grey),
-                  const SizedBox(width: 4),
-                  const Text('3/5명', style: TextStyle(color: Colors.black54)),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF8F9FA),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      children: const [
+                        Icon(Icons.calendar_today,
+                            size: 16, color: Color(0xFF4CD7D0)),
+                        SizedBox(width: 6),
+                        Text(
+                          '2024.04.20 19:00',
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF8F9FA),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      children: const [
+                        Icon(Icons.location_on,
+                            size: 16, color: Color(0xFF4CD7D0)),
+                        SizedBox(width: 6),
+                        Text(
+                          '강남역 스타벅스',
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 16),
+              Row(
+                children: [
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFF8F9FA),
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Row(
+                      children: const [
+                        Icon(Icons.people, size: 16, color: Color(0xFF4CD7D0)),
+                        SizedBox(width: 6),
+                        Text(
+                          '3/5명',
+                          style: TextStyle(
+                            color: Colors.black54,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   const Spacer(),
                   TextButton(
                     style: TextButton.styleFrom(
-                      foregroundColor: const Color(0xFF0288D1),
-                      textStyle: const TextStyle(fontWeight: FontWeight.w500),
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 16, vertical: 8),
+                      backgroundColor: const Color(0xFF4CD7D0).withOpacity(0.1),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
                     ),
                     onPressed: () {
                       Navigator.push(
@@ -272,7 +374,14 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       );
                     },
-                    child: const Text('자세히 보기'),
+                    child: const Text(
+                      '자세히 보기',
+                      style: TextStyle(
+                        color: Color(0xFF4CD7D0),
+                        fontSize: 14,
+                        fontWeight: FontWeight.w600,
+                      ),
+                    ),
                   ),
                 ],
               ),

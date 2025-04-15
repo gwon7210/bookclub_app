@@ -17,7 +17,7 @@ class _ProfileRegisterScreenState extends State<ProfileRegisterScreen> {
     50,
     (index) => (2024 - index).toString(),
   );
-  final List<String> _genders = ['남성', '여성', '선택 안함'];
+  final List<String> _genders = ['남성', '여성'];
   final List<String> _regions = [
     '서울',
     '경기',
@@ -53,100 +53,222 @@ class _ProfileRegisterScreenState extends State<ProfileRegisterScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('프로필 등록')),
+      backgroundColor: Colors.white,
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          '프로필 등록',
+          style: TextStyle(
+            color: Colors.black87,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Colors.black54),
+          onPressed: () => Navigator.pop(context),
+        ),
+      ),
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: Padding(
           padding: const EdgeInsets.all(24),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Text(
-                '프로필을 등록해주세요',
-                style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+              Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF4CD7D0).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(20),
+                ),
+                child: const Text(
+                  '프로필을 등록해주세요',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF4CD7D0),
+                  ),
+                ),
               ),
-              const SizedBox(height: 8),
+              const SizedBox(height: 12),
               const Text(
                 '북클럽에서 사용할 프로필 정보를 입력해주세요',
-                style: TextStyle(fontSize: 16, color: Colors.grey),
+                style: TextStyle(
+                  fontSize: 14,
+                  color: Colors.black54,
+                  height: 1.5,
+                ),
               ),
               const SizedBox(height: 32),
-              TextField(
-                controller: _nicknameController,
-                decoration: const InputDecoration(
-                  labelText: '닉네임',
-                  border: OutlineInputBorder(),
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8F9FA),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                onChanged: (value) => setState(() {}),
+                child: TextField(
+                  controller: _nicknameController,
+                  style: const TextStyle(
+                    fontSize: 16,
+                    color: Colors.black87,
+                  ),
+                  decoration: InputDecoration(
+                    hintText: '닉네임을 입력해주세요',
+                    hintStyle: TextStyle(
+                      color: Colors.grey[400],
+                      fontSize: 16,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
+                    prefixIcon: const Icon(
+                      Icons.person_outline,
+                      color: Color(0xFF4CD7D0),
+                    ),
+                  ),
+                  onChanged: (value) => setState(() {}),
+                ),
               ),
               const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: _selectedYear,
-                decoration: const InputDecoration(
-                  labelText: '출생 연도',
-                  border: OutlineInputBorder(),
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8F9FA),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                items:
-                    _years.map((year) {
-                      return DropdownMenuItem(value: year, child: Text(year));
-                    }).toList(),
-                onChanged: (value) => setState(() => _selectedYear = value),
+                child: DropdownButtonFormField<String>(
+                  value: _selectedYear,
+                  decoration: const InputDecoration(
+                    hintText: '출생 연도',
+                    hintStyle: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 16,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.calendar_today_outlined,
+                      color: Color(0xFF4CD7D0),
+                    ),
+                  ),
+                  items: _years.map((year) {
+                    return DropdownMenuItem(
+                      value: year,
+                      child: Text(
+                        year,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (value) => setState(() => _selectedYear = value),
+                ),
               ),
               const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: _selectedGender,
-                decoration: const InputDecoration(
-                  labelText: '성별',
-                  border: OutlineInputBorder(),
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8F9FA),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                items:
-                    _genders.map((gender) {
-                      return DropdownMenuItem(
-                        value: gender,
-                        child: Text(gender),
-                      );
-                    }).toList(),
-                onChanged: (value) => setState(() => _selectedGender = value),
+                child: DropdownButtonFormField<String>(
+                  value: _selectedGender,
+                  decoration: const InputDecoration(
+                    hintText: '성별',
+                    hintStyle: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 16,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.people_outline,
+                      color: Color(0xFF4CD7D0),
+                    ),
+                  ),
+                  items: _genders.map((gender) {
+                    return DropdownMenuItem(
+                      value: gender,
+                      child: Text(
+                        gender,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (value) => setState(() => _selectedGender = value),
+                ),
               ),
               const SizedBox(height: 16),
-              DropdownButtonFormField<String>(
-                value: _selectedRegion,
-                decoration: const InputDecoration(
-                  labelText: '지역',
-                  border: OutlineInputBorder(),
+              Container(
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8F9FA),
+                  borderRadius: BorderRadius.circular(16),
                 ),
-                items:
-                    _regions.map((region) {
-                      return DropdownMenuItem(
-                        value: region,
-                        child: Text(region),
-                      );
-                    }).toList(),
-                onChanged: (value) => setState(() => _selectedRegion = value),
+                child: DropdownButtonFormField<String>(
+                  value: _selectedRegion,
+                  decoration: const InputDecoration(
+                    hintText: '지역',
+                    hintStyle: TextStyle(
+                      color: Colors.grey,
+                      fontSize: 16,
+                    ),
+                    border: InputBorder.none,
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 16,
+                    ),
+                    prefixIcon: Icon(
+                      Icons.location_on_outlined,
+                      color: Color(0xFF4CD7D0),
+                    ),
+                  ),
+                  items: _regions.map((region) {
+                    return DropdownMenuItem(
+                      value: region,
+                      child: Text(
+                        region,
+                        style: const TextStyle(fontSize: 16),
+                      ),
+                    );
+                  }).toList(),
+                  onChanged: (value) => setState(() => _selectedRegion = value),
+                ),
               ),
-              const SizedBox(height: 32),
+              const Spacer(),
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed:
-                      _isFormValid()
-                          ? () {
-                            // 프로필 등록 완료 후 홈 화면으로 이동
-                            Navigator.pushNamedAndRemoveUntil(
-                              context,
-                              '/home',
-                              (route) => false,
-                            );
-                          }
-                          : null,
+                  onPressed: _isFormValid()
+                      ? () {
+                          Navigator.pushNamed(
+                            context,
+                            '/location',
+                          );
+                        }
+                      : null,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
+                    backgroundColor: _isFormValid()
+                        ? const Color(0xFF4CD7D0)
+                        : Colors.grey[300],
+                    foregroundColor: Colors.white,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(20),
                     ),
+                    elevation: 0,
                   ),
                   child: const Text(
                     '완료',
-                    style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w600,
+                    ),
                   ),
                 ),
               ),

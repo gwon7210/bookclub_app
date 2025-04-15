@@ -5,6 +5,7 @@ import 'screens/auth/phone_screen.dart';
 import 'screens/auth/verify_screen.dart';
 import 'screens/profile/profile_register_screen.dart';
 import 'screens/home/home_screen.dart';
+import 'screens/location/location_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -95,6 +96,7 @@ class MyApp extends StatelessWidget {
         '/phone': (context) => const PhoneScreen(),
         '/verify': (context) => const VerifyScreen(),
         '/profile': (context) => const ProfileRegisterScreen(),
+        '/location': (context) => const LocationScreen(),
         '/home': (context) => const HomeScreen(),
       },
     );
