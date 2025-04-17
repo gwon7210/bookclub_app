@@ -11,6 +11,26 @@ class VerifyScreen extends StatefulWidget {
 class _VerifyScreenState extends State<VerifyScreen> {
   final _codeController = TextEditingController();
   String? _errorMessage;
+  String? _phoneNumber;
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_phoneNumber == null) {
+      final args =
+          ModalRoute.of(context)?.settings.arguments as Map<String, dynamic>?;
+      if (args != null) {
+        setState(() {
+          _phoneNumber = args['phone'];
+        });
+      }
+    }
+  }
 
   @override
   void dispose() {
@@ -131,7 +151,13 @@ class _VerifyScreenState extends State<VerifyScreen> {
                   onPressed: () {
                     if (_isValidCode(_codeController.text)) {
                       setState(() => _errorMessage = null);
-                      Navigator.pushNamed(context, '/profile');
+                      Navigator.pushNamed(
+                        context,
+                        '/location',
+                        arguments: {
+                          'phone': _phoneNumber,
+                        },
+                      );
                     } else {
                       setState(() => _errorMessage = '올바른 인증번호를 입력해주세요');
                     }

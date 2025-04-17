@@ -71,7 +71,7 @@ class StartScreen extends StatelessWidget {
                     const SizedBox(height: 12),
                     TextButton(
                       onPressed: () {
-                        // TODO: 로그인 화면으로 이동
+                        Navigator.pushNamed(context, '/login');
                       },
                       style: TextButton.styleFrom(
                         padding: const EdgeInsets.symmetric(vertical: 16),

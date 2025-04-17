@@ -158,41 +158,6 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const LocationSettingScreen(),
-                ),
-              );
-            },
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-              decoration: BoxDecoration(
-                color: const Color(0xFFF8F9FA),
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Row(
-                children: [
-                  const Text(
-                    '서울 강남',
-                    style: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                      color: Color(0xFF4CD7D0),
-                    ),
-                  ),
-                  const SizedBox(width: 4),
-                  const Icon(
-                    Icons.keyboard_arrow_down,
-                    color: Color(0xFF4CD7D0),
-                    size: 20,
-                  ),
-                ],
-              ),
-            ),
-          ),
           const Spacer(),
           Container(
             padding: const EdgeInsets.all(8),
@@ -213,7 +178,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildMeetingList() {
     return ListView.builder(
-      padding: const EdgeInsets.all(20),
+      padding: const EdgeInsets.all(16),
       itemCount: 10,
       itemBuilder: (context, index) {
         return _buildMeetingCard(context);
@@ -223,7 +188,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget _buildMeetingCard(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
+      margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(16),
@@ -247,7 +212,7 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         },
         child: Padding(
-          padding: const EdgeInsets.all(20),
+          padding: const EdgeInsets.all(16),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -257,7 +222,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Text(
                       '책 제목이 들어갈 자리입니다',
                       style: TextStyle(
-                        fontSize: 18,
+                        fontSize: 16,
                         fontWeight: FontWeight.w600,
                         color: Colors.black87,
                         height: 1.3,
@@ -266,7 +231,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                   Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: const Color(0xFFE1F5FE),
                       borderRadius: BorderRadius.circular(20),
@@ -282,12 +247,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               Row(
                 children: [
                   Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF8F9FA),
                       borderRadius: BorderRadius.circular(20),
@@ -295,13 +260,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Row(
                       children: const [
                         Icon(Icons.calendar_today,
-                            size: 16, color: Color(0xFF4CD7D0)),
+                            size: 14, color: Color(0xFF4CD7D0)),
                         SizedBox(width: 6),
                         Text(
                           '2024.04.20 19:00',
                           style: TextStyle(
                             color: Colors.black54,
-                            fontSize: 14,
+                            fontSize: 13,
                           ),
                         ),
                       ],
@@ -310,7 +275,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const SizedBox(width: 8),
                   Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF8F9FA),
                       borderRadius: BorderRadius.circular(20),
@@ -318,13 +283,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     child: Row(
                       children: const [
                         Icon(Icons.location_on,
-                            size: 16, color: Color(0xFF4CD7D0)),
+                            size: 14, color: Color(0xFF4CD7D0)),
                         SizedBox(width: 6),
                         Text(
                           '강남역 스타벅스',
                           style: TextStyle(
                             color: Colors.black54,
-                            fontSize: 14,
+                            fontSize: 13,
                           ),
                         ),
                       ],
@@ -332,25 +297,25 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 12),
               Row(
                 children: [
                   Container(
                     padding:
-                        const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                     decoration: BoxDecoration(
                       color: const Color(0xFFF8F9FA),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
                       children: const [
-                        Icon(Icons.people, size: 16, color: Color(0xFF4CD7D0)),
+                        Icon(Icons.people, size: 14, color: Color(0xFF4CD7D0)),
                         SizedBox(width: 6),
                         Text(
                           '3/5명',
                           style: TextStyle(
                             color: Colors.black54,
-                            fontSize: 14,
+                            fontSize: 13,
                           ),
                         ),
                       ],
@@ -360,7 +325,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   TextButton(
                     style: TextButton.styleFrom(
                       padding: const EdgeInsets.symmetric(
-                          horizontal: 16, vertical: 8),
+                          horizontal: 12, vertical: 6),
                       backgroundColor: const Color(0xFF4CD7D0).withOpacity(0.1),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(20),
@@ -378,7 +343,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       '자세히 보기',
                       style: TextStyle(
                         color: Color(0xFF4CD7D0),
-                        fontSize: 14,
+                        fontSize: 13,
                         fontWeight: FontWeight.w600,
                       ),
                     ),

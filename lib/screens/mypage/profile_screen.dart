@@ -40,8 +40,6 @@ class ProfileScreen extends StatelessWidget {
                       _buildProfileItem('출생연도', '1995'),
                       const Divider(),
                       _buildProfileItem('성별', '남성'),
-                      const Divider(),
-                      _buildProfileItem('지역', '서울 마포'),
                     ],
                   ),
                 ),

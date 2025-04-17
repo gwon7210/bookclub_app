@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
+import 'dart:developer' as developer;
 
 class LocationScreen extends StatefulWidget {
-  const LocationScreen({super.key});
+  final Map<String, dynamic> userData;
+
+  const LocationScreen({
+    super.key,
+    required this.userData,
+  });
 
   @override
   State<LocationScreen> createState() => _LocationScreenState();
@@ -25,12 +31,14 @@ class _LocationScreenState extends State<LocationScreen> {
       if (permission == LocationPermission.denied) {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
+          developer.log('위치 권한이 거부되었습니다.', name: 'LocationScreen');
           _navigateToHome();
           return;
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
+        developer.log('위치 권한이 영구적으로 거부되었습니다.', name: 'LocationScreen');
         _navigateToHome();
         return;
       }
@@ -40,11 +48,28 @@ class _LocationScreenState extends State<LocationScreen> {
         desiredAccuracy: LocationAccuracy.high,
       );
 
-      // 여기서 위치 정보를 서버에 전송하거나 필요한 처리를 수행
-      // 예시: 2초 대기 후 메인 페이지로 이동
-      await Future.delayed(const Duration(seconds: 2));
-      _navigateToHome();
+      developer.log(
+        '위치 정보 수집 성공: 위도 ${position.latitude}, 경도 ${position.longitude}',
+        name: 'LocationScreen',
+      );
+
+      if (mounted) {
+        final userData = {
+          ...widget.userData,
+          'location': '${position.latitude}, ${position.longitude}',
+        };
+        Navigator.pushNamed(
+          context,
+          '/profile',
+          arguments: userData,
+        );
+      }
     } catch (e) {
+      developer.log(
+        '위치 정보 수집 실패: ${e.toString()}',
+        name: 'LocationScreen',
+        error: e,
+      );
       _navigateToHome();
     }
   }

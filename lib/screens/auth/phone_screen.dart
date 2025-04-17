@@ -141,7 +141,13 @@ class _PhoneScreenState extends State<PhoneScreen> {
                   onPressed: () {
                     if (_isValidPhoneNumber(_phoneController.text)) {
                       setState(() => _errorMessage = null);
-                      Navigator.pushNamed(context, '/verify');
+                      Navigator.pushNamed(
+                        context,
+                        '/verify',
+                        arguments: {
+                          'phone': _phoneController.text,
+                        },
+                      );
                     } else {
                       setState(() => _errorMessage = '올바른 전화번호를 입력해주세요');
                     }
