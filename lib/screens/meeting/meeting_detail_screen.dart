@@ -1,9 +1,19 @@
 import 'package:flutter/material.dart';
 import 'meeting_join_screen.dart';
 
-class MeetingDetailScreen extends StatelessWidget {
-  const MeetingDetailScreen({super.key});
+class MeetingDetailScreen extends StatefulWidget {
+  final String meetingId;
 
+  const MeetingDetailScreen({
+    super.key,
+    required this.meetingId,
+  });
+
+  @override
+  State<MeetingDetailScreen> createState() => _MeetingDetailScreenState();
+}
+
+class _MeetingDetailScreenState extends State<MeetingDetailScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

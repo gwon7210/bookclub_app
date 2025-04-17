@@ -4,6 +4,9 @@ import '../meeting/meeting_create_screen.dart';
 import '../mypage/mypage_screen.dart';
 import '../chat/chat_list_screen.dart';
 import '../location/location_setting_screen.dart';
+import '../../services/api_service.dart';
+import 'package:provider/provider.dart';
+import '../../providers/user_provider.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,6 +17,50 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   int _selectedIndex = 0;
+  List<dynamic> _meetings = [];
+  bool _isLoading = false;
+  String? _error;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchMeetings();
+  }
+
+  Future<void> _fetchMeetings() async {
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
+    try {
+      final token = context.read<UserProvider>().token;
+      final response = await ApiService.get(
+        '/meetings',
+        headers: {
+          'Authorization': 'Bearer $token',
+        },
+      );
+
+      if (response['success'] == true) {
+        setState(() {
+          _meetings = response['data'];
+          _isLoading = false;
+        });
+      } else {
+        setState(() {
+          _error = response['message'] ?? '모임 목록을 불러오는데 실패했습니다';
+          _isLoading = false;
+        });
+      }
+    } catch (e) {
+      setState(() {
+        _error = '서버 연결에 실패했습니다';
+        _isLoading = false;
+      });
+      print('Error fetching meetings: $e');
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -177,16 +224,70 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildMeetingList() {
-    return ListView.builder(
-      padding: const EdgeInsets.all(16),
-      itemCount: 10,
-      itemBuilder: (context, index) {
-        return _buildMeetingCard(context);
-      },
+    if (_isLoading) {
+      return const Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF4CD7D0)),
+        ),
+      );
+    }
+
+    if (_error != null) {
+      return Center(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Text(
+              _error!,
+              style: const TextStyle(
+                color: Colors.red,
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              onPressed: _fetchMeetings,
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF4CD7D0),
+                foregroundColor: Colors.white,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text('다시 시도'),
+            ),
+          ],
+        ),
+      );
+    }
+
+    if (_meetings.isEmpty) {
+      return const Center(
+        child: Text(
+          '아직 독서 모임이 없습니다',
+          style: TextStyle(
+            color: Colors.black54,
+            fontSize: 16,
+          ),
+        ),
+      );
+    }
+
+    return RefreshIndicator(
+      onRefresh: _fetchMeetings,
+      color: const Color(0xFF4CD7D0),
+      child: ListView.builder(
+        padding: const EdgeInsets.all(16),
+        itemCount: _meetings.length,
+        itemBuilder: (context, index) {
+          final meeting = _meetings[index];
+          return _buildMeetingCard(context, meeting);
+        },
+      ),
     );
   }
 
-  Widget _buildMeetingCard(BuildContext context) {
+  Widget _buildMeetingCard(BuildContext context, Map<String, dynamic> meeting) {
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       decoration: BoxDecoration(
@@ -207,7 +308,8 @@ class _HomeScreenState extends State<HomeScreen> {
           Navigator.push(
             context,
             MaterialPageRoute(
-              builder: (context) => const MeetingDetailScreen(),
+              builder: (context) =>
+                  MeetingDetailScreen(meetingId: meeting['id']),
             ),
           );
         },
@@ -218,15 +320,28 @@ class _HomeScreenState extends State<HomeScreen> {
             children: [
               Row(
                 children: [
-                  const Expanded(
-                    child: Text(
-                      '책 제목이 들어갈 자리입니다',
-                      style: TextStyle(
-                        fontSize: 16,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.black87,
-                        height: 1.3,
-                      ),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          meeting['title'] ?? '제목 없음',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black87,
+                            height: 1.3,
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          meeting['book'] ?? '책 제목 없음',
+                          style: const TextStyle(
+                            fontSize: 14,
+                            color: Colors.black54,
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                   Container(
@@ -236,9 +351,9 @@ class _HomeScreenState extends State<HomeScreen> {
                       color: const Color(0xFFE1F5FE),
                       borderRadius: BorderRadius.circular(20),
                     ),
-                    child: const Text(
-                      '즉시 참여',
-                      style: TextStyle(
+                    child: Text(
+                      meeting['status'] ?? '모집중',
+                      style: const TextStyle(
                         color: Color(0xFF0288D1),
                         fontSize: 13,
                         fontWeight: FontWeight.w600,
@@ -258,13 +373,16 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
-                      children: const [
-                        Icon(Icons.calendar_today,
-                            size: 14, color: Color(0xFF4CD7D0)),
-                        SizedBox(width: 6),
+                      children: [
+                        const Icon(
+                          Icons.calendar_today,
+                          size: 14,
+                          color: Color(0xFF4CD7D0),
+                        ),
+                        const SizedBox(width: 6),
                         Text(
-                          '2024.04.20 19:00',
-                          style: TextStyle(
+                          meeting['meetingDate'] ?? '날짜 미정',
+                          style: const TextStyle(
                             color: Colors.black54,
                             fontSize: 13,
                           ),
@@ -281,71 +399,21 @@ class _HomeScreenState extends State<HomeScreen> {
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Row(
-                      children: const [
-                        Icon(Icons.location_on,
-                            size: 14, color: Color(0xFF4CD7D0)),
-                        SizedBox(width: 6),
+                      children: [
+                        const Icon(
+                          Icons.location_on,
+                          size: 14,
+                          color: Color(0xFF4CD7D0),
+                        ),
+                        const SizedBox(width: 6),
                         Text(
-                          '강남역 스타벅스',
-                          style: TextStyle(
+                          meeting['location'] ?? '장소 미정',
+                          style: const TextStyle(
                             color: Colors.black54,
                             fontSize: 13,
                           ),
                         ),
                       ],
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 12),
-              Row(
-                children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF8F9FA),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      children: const [
-                        Icon(Icons.people, size: 14, color: Color(0xFF4CD7D0)),
-                        SizedBox(width: 6),
-                        Text(
-                          '3/5명',
-                          style: TextStyle(
-                            color: Colors.black54,
-                            fontSize: 13,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  const Spacer(),
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          horizontal: 12, vertical: 6),
-                      backgroundColor: const Color(0xFF4CD7D0).withOpacity(0.1),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const MeetingDetailScreen(),
-                        ),
-                      );
-                    },
-                    child: const Text(
-                      '자세히 보기',
-                      style: TextStyle(
-                        color: Color(0xFF4CD7D0),
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                      ),
                     ),
                   ),
                 ],

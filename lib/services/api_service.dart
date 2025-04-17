@@ -61,7 +61,10 @@ class ApiService {
     }
   }
 
-  static Future<Map<String, dynamic>> get(String endpoint) async {
+  static Future<Map<String, dynamic>> get(
+    String endpoint, {
+    Map<String, String>? headers,
+  }) async {
     try {
       final url = '$baseUrl$endpoint';
       developer.log(
@@ -73,6 +76,7 @@ class ApiService {
         Uri.parse(url),
         headers: {
           'Content-Type': 'application/json',
+          ...?headers,
         },
       );
 
