@@ -32,14 +32,34 @@ class _LocationScreenState extends State<LocationScreen> {
         permission = await Geolocator.requestPermission();
         if (permission == LocationPermission.denied) {
           developer.log('위치 권한이 거부되었습니다.', name: 'LocationScreen');
-          _navigateToHome();
+          if (mounted) {
+            final userData = {
+              ...widget.userData,
+              'location': '0, 0', // 기본 위치 값
+            };
+            Navigator.pushNamed(
+              context,
+              '/profile',
+              arguments: userData,
+            );
+          }
           return;
         }
       }
 
       if (permission == LocationPermission.deniedForever) {
         developer.log('위치 권한이 영구적으로 거부되었습니다.', name: 'LocationScreen');
-        _navigateToHome();
+        if (mounted) {
+          final userData = {
+            ...widget.userData,
+            'location': '0, 0', // 기본 위치 값
+          };
+          Navigator.pushNamed(
+            context,
+            '/profile',
+            arguments: userData,
+          );
+        }
         return;
       }
 
@@ -70,7 +90,17 @@ class _LocationScreenState extends State<LocationScreen> {
         name: 'LocationScreen',
         error: e,
       );
-      _navigateToHome();
+      if (mounted) {
+        final userData = {
+          ...widget.userData,
+          'location': '0, 0', // 기본 위치 값
+        };
+        Navigator.pushNamed(
+          context,
+          '/profile',
+          arguments: userData,
+        );
+      }
     }
   }
 

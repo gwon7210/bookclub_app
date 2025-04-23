@@ -101,11 +101,15 @@ class MyApp extends StatelessWidget {
           '/phone': (context) => const PhoneScreen(),
           '/verify': (context) => const VerifyScreen(),
           '/login': (context) => const LoginScreen(),
-          '/location': (context) => const LocationScreen(userData: {}),
+          '/location': (context) {
+            final args = ModalRoute.of(context)?.settings.arguments
+                as Map<String, dynamic>?;
+            return LocationScreen(userData: args ?? {});
+          },
           '/profile': (context) {
             final args = ModalRoute.of(context)?.settings.arguments
                 as Map<String, dynamic>?;
-            return ProfileRegisterScreen(userData: args);
+            return ProfileRegisterScreen(userData: args ?? {});
           },
           '/home': (context) => const HomeScreen(),
         },

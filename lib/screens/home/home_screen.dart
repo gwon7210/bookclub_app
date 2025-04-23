@@ -35,16 +35,16 @@ class _HomeScreenState extends State<HomeScreen> {
 
     try {
       final token = context.read<UserProvider>().token;
+      print('Fetching meetings with token: $token');
       final response = await ApiService.get(
         '/meetings',
-        headers: {
-          'Authorization': 'Bearer $token',
-        },
+        token: token,
       );
+      print('Meetings API response: $response');
 
       if (response['success'] == true) {
         setState(() {
-          _meetings = response['data'];
+          _meetings = response['data'] ?? [];
           _isLoading = false;
         });
       } else {
@@ -332,14 +332,18 @@ class _HomeScreenState extends State<HomeScreen> {
                             color: Colors.black87,
                             height: 1.3,
                           ),
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
                         ),
                         const SizedBox(height: 4),
                         Text(
-                          meeting['book'] ?? '책 제목 없음',
+                          meeting['book_title'] ?? '책 제목 없음',
                           style: const TextStyle(
                             fontSize: 14,
                             color: Colors.black54,
                           ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
                         ),
                       ],
                     ),
@@ -365,55 +369,68 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 12),
               Row(
                 children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF8F9FA),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.calendar_today,
-                          size: 14,
-                          color: Color(0xFF4CD7D0),
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          meeting['meetingDate'] ?? '날짜 미정',
-                          style: const TextStyle(
-                            color: Colors.black54,
-                            fontSize: 13,
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF8F9FA),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.calendar_today,
+                            size: 14,
+                            color: Color(0xFF4CD7D0),
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              '${meeting['date']} ${meeting['time']}' ??
+                                  '날짜 미정',
+                              style: const TextStyle(
+                                color: Colors.black54,
+                                fontSize: 13,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(width: 8),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF8F9FA),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    child: Row(
-                      children: [
-                        const Icon(
-                          Icons.location_on,
-                          size: 14,
-                          color: Color(0xFF4CD7D0),
-                        ),
-                        const SizedBox(width: 6),
-                        Text(
-                          meeting['location'] ?? '장소 미정',
-                          style: const TextStyle(
-                            color: Colors.black54,
-                            fontSize: 13,
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 10, vertical: 4),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF8F9FA),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Row(
+                        children: [
+                          const Icon(
+                            Icons.location_on,
+                            size: 14,
+                            color: Color(0xFF4CD7D0),
                           ),
-                        ),
-                      ],
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              meeting['location'] ?? '장소 미정',
+                              style: const TextStyle(
+                                color: Colors.black54,
+                                fontSize: 13,
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ],

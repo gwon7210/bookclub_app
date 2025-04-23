@@ -149,6 +149,10 @@ class _VerifyScreenState extends State<VerifyScreen> {
                 width: double.infinity,
                 child: ElevatedButton(
                   onPressed: () {
+                    if (_phoneNumber == null) {
+                      setState(() => _errorMessage = '전화번호를 다시 입력해주세요');
+                      return;
+                    }
                     if (_isValidCode(_codeController.text)) {
                       setState(() => _errorMessage = null);
                       Navigator.pushNamed(
