@@ -19,6 +19,13 @@ class _LoginScreenState extends State<LoginScreen> {
   String? _errorMessage;
 
   @override
+  void initState() {
+    super.initState();
+    _phoneController.text = '010-1111-1111';
+    _passwordController.text = 'password123';
+  }
+
+  @override
   void dispose() {
     _phoneController.dispose();
     _passwordController.dispose();
@@ -39,7 +46,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     if (!_isValidPhoneNumber(_phoneController.text)) {
       setState(() {
-        _errorMessage = '올바른 전화번호를 입력해주세요';
+        _errorMessage = '올바른 전화번호를 입력해주세요 (010-XXXX-XXXX)';
       });
       return;
     }
@@ -51,7 +58,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
     try {
       final response = await ApiService.post('/auth/login', {
-        'phone': _phoneController.text,
+        'phoneNumber': _phoneController.text,
         'password': _passwordController.text,
       });
 

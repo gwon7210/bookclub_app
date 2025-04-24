@@ -72,7 +72,8 @@ class ApiService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return {
           'success': true,
-          'data': responseData['meetings'] ?? responseData['data'],
+          'data':
+              responseData['meetings'] ?? responseData['data'] ?? responseData,
           'message': responseData['message'],
         };
       } else {
@@ -137,7 +138,8 @@ class ApiService {
       if (response.statusCode == 200 || response.statusCode == 201) {
         return {
           'success': true,
-          'data': responseData['meetings'] ?? responseData['data'],
+          'data':
+              responseData['meetings'] ?? responseData['data'] ?? responseData,
           'message': responseData['message'],
         };
       } else {
