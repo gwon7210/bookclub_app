@@ -2,6 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'meeting_create_complete_screen.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:provider/provider.dart';
+import '../../providers/user_provider.dart';
+import '../../services/api_service.dart';
 
 class MeetingCreateScreen extends StatefulWidget {
   const MeetingCreateScreen({super.key});
@@ -23,6 +26,7 @@ class _MeetingCreateScreenState extends State<MeetingCreateScreen> {
   bool _isAM = true;
   int _selectedHour = 12;
   int _selectedMinute = 0;
+  String _participationType = 'instant'; // 'instant' 또는 'approval'
 
   @override
   void dispose() {
@@ -457,16 +461,112 @@ class _MeetingCreateScreenState extends State<MeetingCreateScreen> {
                 },
               ),
             ),
+            const SizedBox(height: 16),
+            Container(
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(12),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.grey.withOpacity(0.1),
+                    spreadRadius: 1,
+                    blurRadius: 4,
+                    offset: const Offset(0, 2),
+                  ),
+                ],
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Text(
+                      '참여 유형',
+                      style: TextStyle(
+                        color: Colors.black54,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: RadioListTile<String>(
+                          title: const Text('즉시 참여'),
+                          value: 'instant',
+                          groupValue: _participationType,
+                          onChanged: (value) {
+                            setState(() {
+                              _participationType = value!;
+                            });
+                          },
+                        ),
+                      ),
+                      Expanded(
+                        child: RadioListTile<String>(
+                          title: const Text('승인 필요'),
+                          value: 'approval',
+                          groupValue: _participationType,
+                          onChanged: (value) {
+                            setState(() {
+                              _participationType = value!;
+                            });
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ),
             const SizedBox(height: 32),
             ElevatedButton(
-              onPressed: () {
+              onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => const MeetingCreateCompleteScreen(),
-                    ),
-                  );
+                  try {
+                    final token = context.read<UserProvider>().token;
+                    final response = await ApiService.post(
+                      '/meetings',
+                      {
+                        'title': _titleController.text,
+                        'book_title': _bookController.text,
+                        'date':
+                            '${_selectedDate!.year}-${_selectedDate!.month.toString().padLeft(2, '0')}-${_selectedDate!.day.toString().padLeft(2, '0')}',
+                        'time':
+                            '${_selectedHour.toString().padLeft(2, '0')}:${_selectedMinute.toString().padLeft(2, '0')}',
+                        'location': _locationController.text,
+                        'max_participants':
+                            int.parse(_maxMembersController.text),
+                        'description': _descriptionController.text,
+                        'participation_type': _participationType,
+                      },
+                      token: token,
+                    );
+
+                    if (response['success'] == true) {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) =>
+                              const MeetingCreateCompleteScreen(),
+                        ),
+                      );
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(response['message'] ?? '모임 생성에 실패했습니다'),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
+                  } catch (e) {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('서버 연결에 실패했습니다'),
+                        backgroundColor: Colors.red,
+                      ),
+                    );
+                  }
                 }
               },
               style: ElevatedButton.styleFrom(
