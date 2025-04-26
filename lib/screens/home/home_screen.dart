@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import '../meeting/meeting_detail_screen.dart';
 import '../meeting/meeting_create_screen.dart';
 import '../mypage/mypage_screen.dart';
-import '../chat/chat_list_screen.dart';
+import '../notification/notification_screen.dart';
 import '../location/location_setting_screen.dart';
 import '../../services/api_service.dart';
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
+import '../mypage/my_meetings_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -75,8 +76,10 @@ class _HomeScreenState extends State<HomeScreen> {
                 ],
               )
             : _selectedIndex == 1
-                ? const ChatListScreen()
-                : const MyPageScreen(),
+                ? const MyMeetingsScreen()
+                : _selectedIndex == 2
+                    ? const NotificationScreen()
+                    : const MyPageScreen(),
       ),
       floatingActionButton: _selectedIndex == 0
           ? FloatingActionButton(
@@ -150,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.chat_outlined),
+                child: const Icon(Icons.group_outlined),
               ),
               activeIcon: Container(
                 padding: const EdgeInsets.all(8),
@@ -158,15 +161,36 @@ class _HomeScreenState extends State<HomeScreen> {
                   color: const Color(0xFF4CD7D0).withOpacity(0.1),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.chat),
+                child: const Icon(Icons.group),
               ),
-              label: '채팅',
+              label: '내 모임',
             ),
             BottomNavigationBarItem(
               icon: Container(
                 padding: const EdgeInsets.all(8),
                 decoration: BoxDecoration(
                   color: _selectedIndex == 2
+                      ? const Color(0xFF4CD7D0).withOpacity(0.1)
+                      : Colors.transparent,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.notifications_outlined),
+              ),
+              activeIcon: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: const Color(0xFF4CD7D0).withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: const Icon(Icons.notifications),
+              ),
+              label: '알림',
+            ),
+            BottomNavigationBarItem(
+              icon: Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: _selectedIndex == 3
                       ? const Color(0xFF4CD7D0).withOpacity(0.1)
                       : Colors.transparent,
                   borderRadius: BorderRadius.circular(12),
@@ -345,6 +369,17 @@ class _HomeScreenState extends State<HomeScreen> {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
+                        const SizedBox(height: 4),
+                        if (meeting['host'] != null)
+                          Text(
+                            '방장: ${meeting['host']['nickname'] ?? '이름 없음'}',
+                            style: const TextStyle(
+                              fontSize: 13,
+                              color: Colors.black54,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
                       ],
                     ),
                   ),

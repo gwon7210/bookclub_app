@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import '../../services/api_service.dart';
 import 'package:provider/provider.dart';
 import '../../providers/user_provider.dart';
+import 'meeting_join_screen.dart';
+import 'meeting_join_complete_screen.dart';
 
 class MeetingDetailScreen extends StatefulWidget {
   final String meetingId;
@@ -386,7 +388,7 @@ class _MeetingDetailScreenState extends State<MeetingDetailScreen> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      _meeting!['host']['name'] ?? '이름 없음',
+                      _meeting?['host']?['nickname'] ?? '이름 없음',
                       style: const TextStyle(
                         fontSize: 16,
                         fontWeight: FontWeight.w600,
@@ -395,7 +397,7 @@ class _MeetingDetailScreenState extends State<MeetingDetailScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      _meeting!['host']['location'] ?? '지역 정보 없음',
+                      _meeting?['host']?['location'] ?? '지역 정보 없음',
                       style: const TextStyle(
                         fontSize: 14,
                         color: Colors.black54,
@@ -412,13 +414,35 @@ class _MeetingDetailScreenState extends State<MeetingDetailScreen> {
   }
 
   Widget _buildActionButtons() {
+    final bool isParticipated = _meeting?['is_participated'] ?? false;
+    final bool isApprovalRequired =
+        _meeting?['participation_type'] == 'approval';
+
     return Row(
       children: [
         Expanded(
           child: ElevatedButton(
-            onPressed: () {
-              // TODO: 모임 참여 로직 구현
-            },
+            onPressed: isParticipated
+                ? null
+                : () async {
+                    if (isApprovalRequired) {
+                      // 승인 필요 모임의 경우 메시지 입력 화면으로 이동
+                      final result = await Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const MeetingJoinScreen(),
+                        ),
+                      );
+
+                      if (result != null && result is String) {
+                        // 메시지가 입력된 경우 API 호출
+                        await _joinMeeting(message: result);
+                      }
+                    } else {
+                      // 즉시 참여 모임의 경우 바로 API 호출
+                      await _joinMeeting();
+                    }
+                  },
             style: ElevatedButton.styleFrom(
               backgroundColor: const Color(0xFF4CD7D0),
               foregroundColor: Colors.white,
@@ -427,9 +451,9 @@ class _MeetingDetailScreenState extends State<MeetingDetailScreen> {
                 borderRadius: BorderRadius.circular(12),
               ),
             ),
-            child: const Text(
-              '모임 참여',
-              style: TextStyle(
+            child: Text(
+              isParticipated ? '참여 완료' : '모임 참여',
+              style: const TextStyle(
                 fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
@@ -461,5 +485,43 @@ class _MeetingDetailScreenState extends State<MeetingDetailScreen> {
         ),
       ],
     );
+  }
+
+  Future<void> _joinMeeting({String? message}) async {
+    try {
+      final token = context.read<UserProvider>().token;
+      final response = await ApiService.post(
+        '/meetings/${widget.meetingId}/join',
+        message != null ? {'message': message} : {},
+        token: token,
+      );
+
+      if (response['success'] == true) {
+        // 참여 성공 시 모임 정보 다시 불러오기
+        await _fetchMeetingDetail();
+
+        // 참여 완료 화면으로 이동
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => const MeetingJoinCompleteScreen(),
+          ),
+        );
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(response['message'] ?? '모임 참여에 실패했습니다'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('서버 연결에 실패했습니다'),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
   }
 }

@@ -55,19 +55,11 @@ class _MeetingJoinScreenState extends State<MeetingJoinScreen> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed:
-                      _messageController.text.isNotEmpty
-                          ? () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(
-                                builder:
-                                    (context) =>
-                                        const MeetingJoinCompleteScreen(),
-                              ),
-                            );
-                          }
-                          : null,
+                  onPressed: _messageController.text.isNotEmpty
+                      ? () {
+                          Navigator.pop(context, _messageController.text);
+                        }
+                      : null,
                   style: ElevatedButton.styleFrom(
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
